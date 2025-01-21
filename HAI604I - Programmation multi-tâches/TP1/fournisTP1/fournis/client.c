@@ -25,44 +25,45 @@ int main(int argc, char *argv[])
       exit(1);
    }
 
-   /* Etape 1 : créer une socket */
-   int ds = socket(PF_INET, SOCK_DGRAM, 0);
+   /* Etape 1 : créer une socket */   
+  int ds = socket(PF_INET, SOCK_DGRAM, 0);
 
-   /* /!\ : Il est indispensable de tester les valeurs de retour de
-      toutes les fonctions et agir en fonction des valeurs
-      possibles. Voici un exemple */
-   if (ds == -1)
-   {
-      perror("Client : pb creation socket :");
-      exit(1); // je choisis ici d'arrêter le programme car le reste
-               // dépendent de la réussite de la création de la socket.
-   }
+  /* /!\ : Il est indispensable de tester les valeurs de retour de
+     toutes les fonctions et agir en fonction des valeurs
+     possibles. Voici un exemple */
+  if (ds == -1){
+    perror("Client : pb creation socket :");
+    exit(1); // je choisis ici d'arrêter le programme car le reste
+     // dépendent de la réussite de la création de la socket.
+  }
+  
+  /* J'ajoute des traces pour comprendre l'exécution et savoir
+     localiser des éventuelles erreurs */
+  char* msg = "oui\0";
 
-   /* J'ajoute des traces pour comprendre l'exécution et savoir
-      localiser des éventuelles erreurs */
-   printf("Client : creation de la socket réussie \n");
-
-   // Je peux tester l'exécution de cette étape avant de passer à la
-   // suite. Faire de même pour la suite : n'attendez pas de tout faire
-   // avant de tester.
+  
+  // Je peux tester l'exécution de cette étape avant de passer à la
+  // suite. Faire de même pour la suite : n'attendez pas de tout faire
+  // avant de tester.
 
    /* Etape 2 : Nommer la socket du client */
-   struct sockaddr_in servAddr;
-
-   servAddr.sin_family = AF_INET;
-   servAddr.sin_port = htons(argv[2]);
-   servAddr.sin_addr.s_addr = INADDR_ANY;
-
-   if(bind(ds, *sockaddr_in, ) < 0)
-
-   /* Etape 3 : Désigner la socket du serveur */
-
-   /* Etape 4 : envoyer un message au serveur  (voir sujet pour plus de détails)*/
-
-   /* Etape 5 : recevoir un message du serveur (voir sujet pour plus de détails)*/
-
-   /* Etape 6 : fermer la socket (lorsqu'elle n'est plus utilisée)*/
-
-   printf("Client : je termine\n");
-   return 0;
+  
+  /* Etape 3 : Désigner la socket du serveur */
+  struct sockaddr_in server_addr;
+  server_addr.sin_family = PF_INET;
+  server_addr.sin_port = htons(atoi(argv[2]));
+  server_addr.sin_addr.s_addr = inet_addr(argv[1]);
+  
+  /* Etape 4 : envoyer un message au serveur  (voir sujet pour plus de détails)*/
+  sendto(ds,msg,strlen(msg),0,(struct sockaddr*)&server_addr,sizeof(server_addr));
+  
+  /* Etape 5 : recevoir un message du serveur (voir sujet pour plus de détails)*/
+  int reponse;
+  socklen_t server_len = sizeof(server_addr);
+  recvfrom(ds, &reponse, sizeof(reponse), 0, (struct sockaddr*)&server_addr, &server_len);
+  printf("Message reçu du serveur : %d\n", reponse);
+  /* Etape 6 : fermer la socket (lorsqu'elle n'est plus utilisée)*/
+  
+  printf("Client : je termine\n");
+  return 0;
 }
