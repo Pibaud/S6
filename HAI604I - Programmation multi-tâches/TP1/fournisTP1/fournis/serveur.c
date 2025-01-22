@@ -1,3 +1,4 @@
+#include <netinet/in.h>
 #include <stdio.h> 
 #include <unistd.h>
 #include <sys/types.h>
@@ -43,10 +44,25 @@ int main(int argc, char *argv[]) {
   // avant de tester.
   
   /* Etape 2 : Nommer la socket du seveur */
+
+  struct sockaddr_in serverAddr;
+  serverAddr.sin_family = AF_INET;
+  serverAddr.sin_port = htons(atoi(argv[1]));
+  serverAddr.sin_addr.s_addr = INADDR_ANY;
+
+  socklen_t tailleStructServ = sizeof(serverAddr);
+
+  bind(ds, (struct sockaddr*)&serverAddr, tailleStructServ);
  
   /* Etape 4 : recevoir un message du client (voir sujet pour plus de détails)*/
+
+  char msgCli[100];
+  recvfrom(ds, msgCli, strlen(msgCli), 0, (struct sockaddr*)&serverAddr, &tailleStructServ);
+  printf("reçu : %s", msgCli);
   
+  int resp = strlen(msgCli);
   /* Etape 5 : envoyer un message au serveur (voir sujet pour plus de détails)*/
+  sendto(ds, &resp, sizeof(int)*strlen(msgCli), 0, (struct sockaddr*)&serverAddr, tailleStructServ);
   
   /* Etape 6 : fermer la socket (lorsqu'elle n'est plus utilisée)*/
   
