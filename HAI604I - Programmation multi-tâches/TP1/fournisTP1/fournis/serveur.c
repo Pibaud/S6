@@ -5,68 +5,58 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <stdlib.h>
-#include<arpa/inet.h>
-#include<string.h>
-
-/* Programme serveur */
+#include <arpa/inet.h>
+#include <string.h>
 
 int main(int argc, char *argv[]) {
 
-  /* Je passe en paramètre le numéro de port qui sera donné à la socket créée plus loin.*/
+    if (argc != 2){
+        printf("utilisation : %s port_serveur\n", argv[0]);
+        exit(1);
+    }
 
-  /* Je teste le passage de parametres. Le nombre et la nature des
-     paramètres sont à adapter en fonction des besoins. Sans ces
-     paramètres, l'exécution doit être arrétée, autrement, elle
-     aboutira à des erreurs.*/
-  if (argc != 2){
-    printf("utilisation : %s port_serveur\n", argv[0]);
-    exit(1);
-  }
+    int ds = socket(PF_INET, SOCK_DGRAM, 0);
+    if (ds == -1){
+        perror("Serveur : pb creation socket :");
+        exit(1);
+    }
+    printf("Serveur : création de la socket réussie \n");
 
-  /* Etape 1 : créer une socket */   
-  int ds = socket(PF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(atoi(argv[1]));
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
 
-  /* /!\ : Il est indispensable de tester les valeurs de retour de
-     toutes les fonctions et agir en fonction des valeurs
-     possibles. Voici un exemple */
-  if (ds == -1){
-    perror("Serveur : pb creation socket :");
-    exit(1); // je choisis ici d'arrêter le programme car le reste
-	     // dépendent de la réussite de la création de la socket.
-  }
-  
-  /* J'ajoute des traces pour comprendre l'exécution et savoir
-     localiser des éventuelles erreurs */
-  printf("Serveur : creation de la socket réussie \n");
-  
-  // Je peux tester l'exécution de cette étape avant de passer à la
-  // suite. Faire de même pour la suite : n'attendez pas de tout faire
-  // avant de tester.
-  
-  /* Etape 2 : Nommer la socket du seveur */
+    socklen_t tailleStructServ = sizeof(serverAddr);
+    if (bind(ds, (struct sockaddr*)&serverAddr, tailleStructServ) < 0) {
+        perror("Serveur : erreur lors du bind :");
+        close(ds);
+        exit(1);
+    }
+    printf("Serveur : bind réussi\n");
 
-  struct sockaddr_in serverAddr;
-  serverAddr.sin_family = AF_INET;
-  serverAddr.sin_port = htons(atoi(argv[1]));
-  serverAddr.sin_addr.s_addr = INADDR_ANY;
+    while (1) {
+        char msgCli[100] = {0};
+        struct sockaddr_in clientAddr;
+        socklen_t tailleStructClient = sizeof(clientAddr);
 
-  socklen_t tailleStructServ = sizeof(serverAddr);
+        int rcv = recvfrom(ds, msgCli, sizeof(msgCli), 0, (struct sockaddr*)&clientAddr, &tailleStructClient);
+        if (rcv < 0) {
+            perror("Serveur : erreur réception message :");
+            continue;
+        }
+        msgCli[rcv] = '\0'; // Assurez-vous que la chaîne est terminée
+        printf("Serveur : reçu '%s' de %s:%d\n", msgCli, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
-  bind(ds, (struct sockaddr*)&serverAddr, tailleStructServ);
- 
-  /* Etape 4 : recevoir un message du client (voir sujet pour plus de détails)*/
+        int resp = strlen(msgCli);
+        if (sendto(ds, &resp, sizeof(int), 0, (struct sockaddr*)&clientAddr, tailleStructClient) < 0) {
+            perror("Serveur : erreur envoi réponse :");
+        } else {
+            printf("Serveur : réponse envoyée : %d octets\n", resp);
+        }
+    }
 
-  char msgCli[100];
-  recvfrom(ds, msgCli, strlen(msgCli), 0, (struct sockaddr*)&serverAddr, &tailleStructServ);
-  printf("reçu : %s", msgCli);
-  
-  int resp = strlen(msgCli);
-  /* Etape 5 : envoyer un message au serveur (voir sujet pour plus de détails)*/
-  sendto(ds, &resp, sizeof(int)*strlen(msgCli), 0, (struct sockaddr*)&serverAddr, tailleStructServ);
-  
-  /* Etape 6 : fermer la socket (lorsqu'elle n'est plus utilisée)*/
-  
-  
-  printf("Serveur : je termine\n");
-  return 0;
+    close(ds);
+    printf("Serveur : je termine\n");
+    return 0;
 }

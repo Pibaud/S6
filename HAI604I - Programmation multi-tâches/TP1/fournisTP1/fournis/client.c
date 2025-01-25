@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
   server_addr.sin_addr.s_addr = inet_addr(argv[1]);
   
   /* Etape 4 : envoyer un message au serveur  (voir sujet pour plus de détails)*/
+  printf("j'envoie le message : %s\n", msg);
   sendto(ds,msg,strlen(msg),0,(struct sockaddr*)&server_addr,sizeof(server_addr));
   
   /* Etape 5 : recevoir un message du serveur (voir sujet pour plus de détails)*/
@@ -65,5 +66,6 @@ int main(int argc, char *argv[])
   /* Etape 6 : fermer la socket (lorsqu'elle n'est plus utilisée)*/
   
   printf("Client : je termine\n");
+  close(ds);
   return 0;
 }
