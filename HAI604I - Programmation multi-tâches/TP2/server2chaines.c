@@ -35,36 +35,44 @@ int main(int argc, char *argv[]) {
   }
   printf("Serveur : bind réussi\n");
 
-  if(listen(ds, 10) < 0){
+  if (listen(ds, 10) < 0) {
     perror("erreur de listen");
   }
 
   struct sockaddr_in clientAddr;
   socklen_t tailleStructClient = sizeof(clientAddr);
 
-  int dsClient = accept(ds, (struct sockaddr *)&clientAddr, &tailleStructClient);
+  int dsClient =
+      accept(ds, (struct sockaddr *)&clientAddr, &tailleStructClient);
 
-  if(dsClient < 0){
+  if (dsClient < 0) {
     perror("erreur de accept");
   }
 
   char msgCli[4000] = {0};
-  
-  int rcv = recv(dsClient, msgCli, sizeof(msgCli), 0);
-  if(rcv < 0){
-    perror("erreur recv");
+
+  int nbrcv = 0;
+  int nboc = 0;
+
+  while (1) {
+    int rcv = recv(dsClient, msgCli, sizeof(msgCli), 0);
+    if (rcv < 0) {
+      perror("erreur recv");
+    }
+    nboc += rcv;
+    nbrcv ++;
+    msgCli[rcv] = '\0';
+    printf("Serveur : reçu '%s' (%d octets) de %s:%d\n", msgCli, rcv,
+           inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+
+    int resp = strlen(msgCli);
+    if (send(dsClient, &resp, sizeof(int), 0) < 0) {
+      perror("Serveur : erreur envoi réponse :");
+    } else {
+      printf("Serveur : réponse envoyée : %d octets\n", resp);
+    }
   }
-
-  msgCli[rcv] = '\0';
-  printf("Serveur : reçu '%s' (%d octets) de %s:%d\n", msgCli, rcv, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
-
-  int resp = strlen(msgCli);
-  if (send(dsClient, &resp, sizeof(int), 0) < 0) {
-    perror("Serveur : erreur envoi réponse :");
-  } else {
-    printf("Serveur : réponse envoyée : %d octets\n", resp);
-  }
-
+  printf("%d octets depuis le début, %d appels à recv", nboc, nbrcv);
   close(ds);
   printf("Serveur : je termine\n");
   return 0;
