@@ -13,7 +13,7 @@ int DEBUG=0;			/* débogage */
  * @returns le JETON entier correspondant à l'état final de l'AFD
  */
 int analex(){			/* reconnaît un mot sur l'entrée standard */
-  int  etat=EINIT;		/* unique état initial */
+  int etat=EINIT;		/* unique état initial */
   int efinal=-1;		/* pas d'état final déjà vu */
   int lfinal=0;			/* longueur du lexème final */
   int c;char sc[2];int i;	/* caractère courant */

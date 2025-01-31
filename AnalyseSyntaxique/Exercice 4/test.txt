@@ -1,0 +1,2 @@
+234654765764 0x45 0.45 abc
+def 045 0.45 nom_de_variable ;
