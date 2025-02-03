@@ -54,26 +54,19 @@ int main(int argc, char *argv[])
     perror("erreur de connect");
   }
 
-  char *msg = "abcdefgh\0";
+  char *msg = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\0";
   int octetsDepuisDeb = 0;
   int octetsSupposes = 0;
   int appelsSend = 0;
 
   for (int i = 0; i < nb_iterations; i++)
   {
-    printf("j'envoie le message : %s , de taille %ld\n", msg, strlen(msg));
     int resSend = send(ds, msg, strlen(msg), 0);
-    printf("%d octets écrits\n", resSend); // un send reste local TANT QUE PAS DE ACCEPT DE SERVEUR
     if (resSend < 0){
       perror("echec send");
     }
     octetsSupposes += resSend;
     appelsSend++;
-
-    int recu;
-    recv(ds, &recu, sizeof(int), 0);
-    printf("Message reçu du serveur : %d\n", recu);
-    octetsDepuisDeb += recu;
   }
 
   printf("%d octets supposés envoyés, %d octets réellement envoyés au total avec %d appels à send\n", octetsSupposes, octetsDepuisDeb, appelsSend);

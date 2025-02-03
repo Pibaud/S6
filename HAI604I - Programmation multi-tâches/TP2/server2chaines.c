@@ -54,6 +54,10 @@ int main(int argc, char *argv[]) {
   int nbrcv = 0;
   int nboc = 0;
 
+  char c;
+  printf("Entrez un char pour poursuivre");
+  scanf("%c", &c);
+
   while (1) {
     int rcv = recv(dsClient, msgCli, sizeof(msgCli), 0);
   if (rcv < 0) {
