@@ -9,6 +9,23 @@
 
 /* Programme client */
 
+int sendTCP(int sock, void *msg, int sizeMsg){
+  while(sizeMsg != 0){
+    int sent = send(sock, msg, sizeMsg, 0);
+    if(sent == -1){
+      perror("erreur du sendTCP");
+      return -1;
+    }
+    if(sent == 0){
+      printf("La connexion a été fermée\n");
+      return 0;
+    }
+    else{
+      sizeMsg -= sent;
+    }
+  }
+  return 1;
+}
 int main(int argc, char *argv[])
 {
 
@@ -62,12 +79,14 @@ int main(int argc, char *argv[])
   for (int i = 0; i < nb_iterations; i++)
   {
     int resSend = send(ds, msg, strlen(msg), 0);
-    if (resSend < 0){
+    if (resSend < 0)
+    {
       perror("echec send");
       close(ds);
       exit(1);
     }
-    if(resSend == 0){
+    if (resSend == 0)
+    {
       printf("fin de la communication\n");
       exit(1);
     }
