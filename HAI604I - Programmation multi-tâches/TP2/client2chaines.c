@@ -9,7 +9,8 @@
 
 /* Programme client */
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
   /* je passe en paramètre l'adresse de la socket du serveur (IP et
      numéro de port) et un numéro de port à donner à la socket créée plus
@@ -19,7 +20,8 @@ int main(int argc, char *argv[]) {
      paramètres sont à adapter en fonction des besoins. Sans ces
      paramètres, l'exécution doit être arrétée, autrement, elle
      aboutira à des erreurs.*/
-  if (argc != 5) {
+  if (argc != 5)
+  {
     printf("utilisation : %s ip_serveur port_serveur port_client "
            "nb_iterations_boucle\n",
            argv[0]);
@@ -33,7 +35,8 @@ int main(int argc, char *argv[]) {
   /* /!\ : Il est indispensable de tester les valeurs de retour de
      toutes les fonctions et agir en fonction des valeurs
      possibles. Voici un exemple */
-  if (ds == -1) {
+  if (ds == -1)
+  {
     perror("Client : pb creation socket :");
     exit(1); // je choisis ici d'arrêter le programme car le reste
              // dépendent de la réussite de la création de la socket.
@@ -46,30 +49,34 @@ int main(int argc, char *argv[]) {
 
   socklen_t server_len = sizeof(server_addr);
 
-  if (connect(ds, (struct sockaddr *)&server_addr, server_len) < 0) {
+  if (connect(ds, (struct sockaddr *)&server_addr, server_len) < 0)
+  {
     perror("erreur de connect");
   }
 
-  char *msg = "0123456789";
+  char *msg = "abcdefgh\0";
   int octetsDepuisDeb = 0;
+  int octetsSupposes = 0;
   int appelsSend = 0;
 
-  for (int i = 0; i < nb_iterations; i++) {
+  for (int i = 0; i < nb_iterations; i++)
+  {
     printf("j'envoie le message : %s , de taille %ld\n", msg, strlen(msg));
     int resSend = send(ds, msg, strlen(msg), 0);
-    printf("%d octets écrits\n",resSend); // un send reste local TANT QUE PAS DE ACCEPT DE SERVEUR
-    if (resSend < 0) {
+    printf("%d octets écrits\n", resSend); // un send reste local TANT QUE PAS DE ACCEPT DE SERVEUR
+    if (resSend < 0){
       perror("echec send");
     }
-    octetsDepuisDeb += resSend;
-    appelsSend ++;
+    octetsSupposes += resSend;
+    appelsSend++;
+
+    int recu;
+    recv(ds, &recu, sizeof(int), 0);
+    printf("Message reçu du serveur : %d\n", recu);
+    octetsDepuisDeb += recu;
   }
 
-  printf("%d octets envoyés au total avec %d appels à send\n", octetsDepuisDeb, appelsSend);
-
-  int recu;
-  recv(ds, &recu, sizeof(int), 0);
-  printf("Message reçu du serveur : %d\n", recu);
+  printf("%d octets supposés envoyés, %d octets réellement envoyés au total avec %d appels à send\n", octetsSupposes, octetsDepuisDeb, appelsSend);
 
   /* Etape 6 : fermer la socket (lorsqu'elle n'est plus utilisée)*/
 

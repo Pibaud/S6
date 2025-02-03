@@ -56,14 +56,17 @@ int main(int argc, char *argv[]) {
 
   while (1) {
     int rcv = recv(dsClient, msgCli, sizeof(msgCli), 0);
-    if (rcv < 0) {
-      perror("erreur recv");
-    }
+  if (rcv < 0) {
+    perror("Serveur : erreur recv");
+    break;
+  } else if (rcv == 0) {
+    printf("Serveur : connexion fermée par le client\n");
+    break;
+  }
     nboc += rcv;
     nbrcv ++;
     msgCli[rcv] = '\0';
-    printf("Serveur : reçu '%s' (%d octets) de %s:%d\n", msgCli, rcv,
-           inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+    printf("Serveur : (appel n°%d à recv) reçu '%s' (%d octets depuis le début) de %s:%d\n", nbrcv, msgCli, nboc, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
     int resp = strlen(msgCli);
     if (send(dsClient, &resp, sizeof(int), 0) < 0) {
@@ -72,7 +75,6 @@ int main(int argc, char *argv[]) {
       printf("Serveur : réponse envoyée : %d octets\n", resp);
     }
   }
-  printf("%d octets depuis le début, %d appels à recv", nboc, nbrcv);
   close(ds);
   printf("Serveur : je termine\n");
   return 0;
