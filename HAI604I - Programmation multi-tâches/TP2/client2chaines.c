@@ -64,6 +64,12 @@ int main(int argc, char *argv[])
     int resSend = send(ds, msg, strlen(msg), 0);
     if (resSend < 0){
       perror("echec send");
+      close(ds);
+      exit(1);
+    }
+    if(resSend == 0){
+      printf("fin de la communication\n");
+      exit(1);
     }
     octetsSupposes += resSend;
     appelsSend++;

@@ -7,8 +7,11 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <signal.h>
 
 int main(int argc, char *argv[]) {
+
+  signal(SIGPIPE, SIG_IGN);
 
   if (argc != 2) {
     printf("utilisation : %s port_serveur\n", argv[0]);
@@ -49,13 +52,13 @@ int main(int argc, char *argv[]) {
     perror("erreur de accept");
   }
 
-  char msgCli[4000] = {0};
+  char msgCli[132] = {0};
 
   int nbrcv = 0;
   int nboc = 0;
 
   char c;
-  printf("Entrez un char pour poursuivre");
+  printf("Entrez un char pour poursuivre\n");
   scanf("%c", &c);
 
   while (1) {
@@ -63,23 +66,16 @@ int main(int argc, char *argv[]) {
   if (rcv < 0) {
     perror("Serveur : erreur recv");
     break;
-  } else if (rcv == 0) {
+  }
+  if (rcv == 0) {
     printf("Serveur : connexion fermée par le client\n");
     break;
   }
     nboc += rcv;
     nbrcv ++;
     msgCli[rcv] = '\0';
-    printf("Serveur : (appel n°%d à recv) reçu '%s' (%d octets depuis le début) de %s:%d\n", nbrcv, msgCli, nboc, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
-
-    int resp = strlen(msgCli);
-    if (send(dsClient, &resp, sizeof(int), 0) < 0) {
-      perror("Serveur : erreur envoi réponse :");
-    } else {
-      printf("Serveur : réponse envoyée : %d octets\n", resp);
-    }
   }
+  printf("Serveur : je termine avec %d octets reçus avec %d appels à recv\n",nboc, nbrcv);
   close(ds);
-  printf("Serveur : je termine\n");
   return 0;
 }
