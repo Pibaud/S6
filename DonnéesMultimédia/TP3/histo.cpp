@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    char cNomImgLue[250], cNomImgEcrite[250], nomHistogramme[250];
+    char cNomImgLue[250], nomHistogramme[250];
     int nH, nW, nTaille;
 
     if (argc != 3)
