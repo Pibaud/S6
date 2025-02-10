@@ -9,25 +9,21 @@
 
 /* Programme client */
 
-int sendTCP(int sock, void *msg, int sizeMsg){
-  while(sizeMsg != 0){
+int sendTCP(int sock, void *msg, int sizeMsg) {
+  while (sizeMsg != 0) {
     int sent = send(sock, msg, sizeMsg, 0);
-    if(sent == -1){
-      perror("erreur du sendTCP");
+    if (sent == -1) {
       return -1;
     }
-    if(sent == 0){
-      printf("La connexion a été fermée\n");
+    if (sent == 0) {
       return 0;
     }
-    else{
-      sizeMsg -= sent;
-    }
+    msg = (char *)msg + sent;
+    sizeMsg -= sent;
   }
   return 1;
 }
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
   /* je passe en paramètre l'adresse de la socket du serveur (IP et
      numéro de port) et un numéro de port à donner à la socket créée plus
@@ -37,23 +33,18 @@ int main(int argc, char *argv[])
      paramètres sont à adapter en fonction des besoins. Sans ces
      paramètres, l'exécution doit être arrétée, autrement, elle
      aboutira à des erreurs.*/
-  if (argc != 5)
-  {
-    printf("utilisation : %s ip_serveur port_serveur port_client "
-           "nb_iterations_boucle\n",
-           argv[0]);
+  if (argc != 4) {
+    printf("utilisation : %s ip_serveur port_serveur port_client ", argv[0]);
     exit(1);
   }
 
   /* Etape 1 : créer une socket */
   int ds = socket(PF_INET, SOCK_STREAM, 0);
-  int nb_iterations = atoi(argv[4]);
 
   /* /!\ : Il est indispensable de tester les valeurs de retour de
      toutes les fonctions et agir en fonction des valeurs
      possibles. Voici un exemple */
-  if (ds == -1)
-  {
+  if (ds == -1) {
     perror("Client : pb creation socket :");
     exit(1); // je choisis ici d'arrêter le programme car le reste
              // dépendent de la réussite de la création de la socket.
@@ -66,35 +57,19 @@ int main(int argc, char *argv[])
 
   socklen_t server_len = sizeof(server_addr);
 
-  if (connect(ds, (struct sockaddr *)&server_addr, server_len) < 0)
-  {
+  if (connect(ds, (struct sockaddr *)&server_addr, server_len) < 0) {
     perror("erreur de connect");
   }
 
-  char *msg = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\0";
-  int octetsDepuisDeb = 0;
-  int octetsSupposes = 0;
-  int appelsSend = 0;
+  char *msg = "aaaaa\0";
 
-  for (int i = 0; i < nb_iterations; i++)
-  {
-    int resSend = send(ds, msg, strlen(msg), 0);
-    if (resSend < 0)
-    {
-      perror("echec send");
-      close(ds);
-      exit(1);
-    }
-    if (resSend == 0)
-    {
-      printf("fin de la communication\n");
-      exit(1);
-    }
-    octetsSupposes += resSend;
-    appelsSend++;
-  }
+  char c;
+  printf("Entrez un char pour poursuivre l'exécution ...\n");
+  scanf("%c", &c);
 
-  printf("%d octets supposés envoyés, %d octets réellement envoyés au total avec %d appels à send\n", octetsSupposes, octetsDepuisDeb, appelsSend);
+  sendTCP(ds, msg, strlen(msg));
+
+  printf("sendTCP réussi avec msg = %s\n", msg);
 
   /* Etape 6 : fermer la socket (lorsqu'elle n'est plus utilisée)*/
 
