@@ -23,6 +23,7 @@ int sendTCP(int sock, void *msg, int sizeMsg) {
   }
   return 1;
 }
+
 int main(int argc, char *argv[]) {
 
   /* je passe en paramètre l'adresse de la socket du serveur (IP et
