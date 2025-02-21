@@ -47,7 +47,7 @@ void X(){			/* AXIOME */
     else ERREUR_SYNTAXE;          /* expression reconnue mais reste des car */
   }
 }
-int E(){                       	/* regle : E->TR */
+char* E(){                       	/* regle : E->TR */
   return R(T());		
 }
 int R(int g){
@@ -71,20 +71,19 @@ int S(int g){
   else                          /* regle : S->epsilon */
     return g;                   /* ret la partie gauche */
 }
-int F(){
-  int r;                        /* resultat */
+char * F(){
   if (jeton=='(') {             /* regle : F->(E) */
     AVANCER;
-    r=E();
+    char *chaine = E();
     TEST_AVANCE(')');
   }
   else 
     if (isdigit(jeton)) {       /* regle : F->0|1|...|9 */
-      r=jeton-'0';              /* valeur comprise entre 0 et 9 */
+      char *chaine =jeton-'0';              /* valeur comprise entre 0 et 9 */
       AVANCER;
     }
     else ERREUR_SYNTAXE;
-  return r;
+  return chaine;
 }
 int main(){                         /* Fonction principale */
   printf(INVITE);
