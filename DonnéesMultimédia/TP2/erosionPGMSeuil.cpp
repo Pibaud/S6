@@ -36,6 +36,9 @@ int main(int argc, char *argv[]) {
         ImgIn[(i+1)*nW+(j+1)] == 255){
             ImgOut[i*nW+j] = 255;
         }
+        else{
+            ImgOut[i*nW+j] = 0;
+        }
     }
 
   ecrire_image_pgm(cNomImgEcrite, ImgOut, nH, nW);

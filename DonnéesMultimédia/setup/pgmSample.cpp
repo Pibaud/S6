@@ -24,8 +24,6 @@ int main(int argc, char *argv[]) {
   lire_image_pgm(cNomImgLue, ImgIn, nH * nW);
   allocation_tableau(ImgOut, OCTET, nTaille);
 
-  int pnoirlus = 0;
-
   for (int i = 1; i < nH-1; i++)
     for (int j = 1; j < nW-1; j++) {
         if(ImgIn[i*nW+j] == 255){
