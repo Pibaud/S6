@@ -41,21 +41,24 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  for (int i = 0; i < nH; i++) {
-    for (int j = 0; j < nW; j++) {
-      if ((S1 < ImgTemp[i * nW + j] &&
-          ImgTemp[(i-1) * nW + j-1] < S2) &&
-          (ImgTemp[(i-1) * nW + j] == 255 ||
-          ImgTemp[(i-1) * nW + j+1] == 255 ||
-          ImgTemp[i * nW + j-1] == 255 ||
-          ImgTemp[i * nW + j+1] == 255 ||
-          ImgTemp[(i+1) * nW + j-1] == 255 ||
-          ImgTemp[(i+1) * nW + j] == 255 ||
-          ImgTemp[(i+1) * nW + j+1] == 255)) {
-        ImgOut[i * nW + j] = 255;
-      } else {
-        ImgOut[i * nW + j] = 0;
-      }
+  for (int i = 1; i < nH - 1; i++) {
+    for (int j = 1; j < nW - 1; j++) {
+        if (S1 < ImgTemp[i * nW + j] && ImgTemp[i * nW + j] < S2) {
+            if (ImgTemp[(i-1) * nW + j-1] == 255 ||
+                ImgTemp[(i-1) * nW + j] == 255 ||
+                ImgTemp[(i-1) * nW + j+1] == 255 ||
+                ImgTemp[i * nW + j-1] == 255 ||
+                ImgTemp[i * nW + j+1] == 255 ||
+                ImgTemp[(i+1) * nW + j-1] == 255 ||
+                ImgTemp[(i+1) * nW + j] == 255 ||
+                ImgTemp[(i+1) * nW + j+1] == 255) {
+                ImgOut[i * nW + j] = 255;
+            } else {
+                ImgOut[i * nW + j] = 0;
+            }
+        } else {
+            ImgOut[i * nW + j] = 0;
+        }
     }
   }
 

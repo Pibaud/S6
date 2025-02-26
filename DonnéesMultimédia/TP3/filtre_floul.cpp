@@ -31,8 +31,6 @@ int main(int argc, char *argv[]) {
         ImgOut[i*nW+j] = (ImgIn[(i)*nW+(j)] + ImgIn[(i-1)*nW+j] + ImgIn[i*nW+(j-1)] + ImgIn[(i+1)*nW+j] + ImgIn[i*nW+(j+1)])/5;
     }
 
-  printf("pnoirslus : %d\n", pnoirlus);
-
   ecrire_image_pgm(cNomImgEcrite, ImgOut, nH, nW);
   free(ImgIn);
   free(ImgOut);
