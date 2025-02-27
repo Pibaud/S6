@@ -1,0 +1,23 @@
+Première série:
+    - Non il n'était pas nécessaire car un bind implicite sera réalisé en associant aléatoirement
+      un port à l'adresse IP du client. La fonction sendto pourra donc fonctionner
+    
+    - Il faudrait modifier le buffer de réception pour le définir en tant que int*
+      faire une boucle poue afficher tous les int
+
+    - Il faut que le sendto soit : sendto(ds, &adrServ, sizeof(adrServ), 0, (struct sockaddr*)&adrServ, sizeof(adrServ))
+
+Deuxième série:
+    - Ce qui est bloquant est le recvfrom et pas le sendto
+    - Le message ne peut pas être envoyé et donc aucune réponse ne peut etre envoyée : interblocage
+    - le buffer se remplit de toutes façons peut importe quand on le lit
+    - ça marche mais le message est tronqué
+    - le sendto n'a plus de place dans le buffer : Client : erreur d'envoi: Message too long
+
+Troisième série:
+    - ne pas renseigner le port dans la struct pour appeler getsockname qui va stocker dans une struct ses résultats dont l'adresse IP et le port aléatoirement choisi
+
+Quatrième série:
+    - Dès qu'un client a été recv l'autre va attendre
+    - Erreur à l'exécution : port already in use
+    - faire un while 1
