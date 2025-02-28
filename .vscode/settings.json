@@ -102,6 +102,8 @@
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "cinttypes": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "stdlib.h": "c",
+    "inet.h": "c"
   }
 }

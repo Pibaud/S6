@@ -1,0 +1,12 @@
+- Si on suspend le serveur avant le accept et qu'on lance le client, le client se met 
+  en liste d'attente des connexions et sera accepté à la reprise du serveur.
+  Le serveur est toujours en mode écoute mais n'accepte pas officiellement le client.
+
+- Dans le cas où plusieurs clients sont lancés, le premier qui demande une connexion sera accepté.
+  Déclenchant ainsi le recv le send et la terminaison coté serveur. Le serveur terminant après avoir traité le premier
+  client, les autres clients ont une erreur dans recv : Connection reset by peer
+
+- Toujours la meme chose, si un client est lancé puis bloqué et qu'on en lance un autre,
+  le premier lancé va être celui avec lequel le serveur va exécuter ses envois et terminer
+
+- Ce n'est pas concurrent, donc peut générer
