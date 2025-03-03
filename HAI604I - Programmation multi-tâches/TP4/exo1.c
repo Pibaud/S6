@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include "calcul.h"
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex;
 
 struct paramsFonctionThread {
   int idThread;
@@ -27,6 +27,11 @@ void * fonctionThread (void * params){
 }
 
 int main(int argc, char * argv[]){
+
+  if (pthread_mutex_init(&mutex, NULL) != 0) {
+    perror("pthread_mutex_init");
+    exit(EXIT_FAILURE);
+  }
 
   if (argc < 2 ){
     printf("utilisation: %s  nombre_threads  \n", argv[0]);
