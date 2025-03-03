@@ -1,9 +1,3 @@
-// To compile and execute this code on Windows:
-// 1. Open Command Prompt.
-// 2. Navigate to the directory containing this file.
-// 3. Compile the code using: g++ -o dilatationPPM dilatationPPM.cpp image_ppm.cpp
-// 4. Run the executable using: dilatationPPM ImageIn.ppm ImageOut.ppm
-
 #include "image_ppm.h"
 #include <stdio.h>
 #include <algorithm>
