@@ -17,8 +17,8 @@ int main(int argc, char* argv[])
    sscanf (argv[1],"%s",cNomImgLue) ;
    sscanf (argv[2],"%s",cNomImgEcrite);
    sscanf (argv[3],"%d",&S_R);
-   sscanf (argv[3],"%d",&S_G);
-   sscanf (argv[3],"%d",&S_B);
+   sscanf (argv[4],"%d",&S_G);
+   sscanf (argv[5],"%d",&S_B);
 
    OCTET *ImgIn, *ImgOut;
    
